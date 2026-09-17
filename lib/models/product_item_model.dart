@@ -1,4 +1,7 @@
 import 'package:ecommerce_app/utitlities/app_assets.dart';
+enum ProductSize{
+  S,M,L,xL
+}
 
 class ProductItemModel {
   final String id;
@@ -8,6 +11,9 @@ class ProductItemModel {
   String description;
   final String category;
   bool isFavorite;
+  double averageRate;
+  final int quantity;
+  ProductSize? size;
   ProductItemModel({
     required this.id,
     required this.name,
@@ -16,7 +22,34 @@ class ProductItemModel {
     required this.price,
     this.isFavorite = false,
     required this.category,
+    this.averageRate = 4.5,
+    this.quantity = 1,
+    this.size
   });
+
+  ProductItemModel copyWith({
+    String? id,
+    String? name,
+    String? imgUrl,
+    double? price,
+    String? description,
+    String? category,
+    bool? isFavorite,
+    double? averageRate,
+  }) {
+    return ProductItemModel(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      imgUrl: imgUrl ?? this.imgUrl,
+      price: price ?? this.price,
+      description: description ?? this.description,
+      category: category ?? this.category,
+      isFavorite: isFavorite ?? this.isFavorite,
+      averageRate: averageRate ?? this.averageRate,
+   
+    );
+  }
+  
 }
 
 List<ProductItemModel> dummyProducts = [
@@ -26,15 +59,15 @@ List<ProductItemModel> dummyProducts = [
     imgUrl: AppAssets.menShoesImage,
     price: 20,
     category: 'Shoes',
-    isFavorite: true
+    isFavorite: true,
   ),
   ProductItemModel(
     id: '3p6nOiAbCwlKNZkme7t2',
     name: 'Trousers',
-    imgUrl:AppAssets.trouserImage,
+    imgUrl: AppAssets.trouserImage,
     price: 30,
     category: 'Clothes',
-    isFavorite: true
+    isFavorite: true,
   ),
   ProductItemModel(
     id: 'Y4xM7ukLvqRsurgioQmN',
@@ -88,7 +121,7 @@ List<ProductItemModel> dummyProducts = [
   ProductItemModel(
     id: 'jXDJxAUnBWJTXrOn5V1n',
     name: 'Sweet Shirt',
-    imgUrl: AppAssets.tShirtImage ,
+    imgUrl: AppAssets.tShirtImage,
     price: 15,
     category: 'Clothes',
   ),

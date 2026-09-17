@@ -1,5 +1,4 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:ecommerce_app/view_models/cubit/home_cubit.dart';
+import 'package:ecommerce_app/view_models/home_cubit/home_cubit.dart';
 import 'package:ecommerce_app/views/pages/widgets/categories_tab_view.dart';
 import 'package:ecommerce_app/views/pages/widgets/home_tab_view.dart';
 import 'package:flutter/material.dart';
@@ -36,57 +35,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      CircleAvatar(
-                        backgroundImage: CachedNetworkImageProvider(
-                          'https://images.pexels.com/photos/6634172/pexels-photo-6634172.jpeg',
-                        ),
-                        radius: 30,
-                      ),
-                      const SizedBox(width: 10),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Ahmad Alwazeh",
-                            style: Theme.of(context).textTheme.titleMedium,
-                          ),
-                          const SizedBox(height: 5),
-                          Text(
-                            "Let's Shopping",
-                            style: Theme.of(context).textTheme.labelMedium!
-                                .copyWith(color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  Row(
-                    children: [
-                      Row(
-                        children: [
-                          IconButton(
-                            onPressed: () {},
-                            icon: Icon(Icons.search),
-                          ),
-                          IconButton(
-                            onPressed: () {},
-                            icon: Icon(Icons.notifications),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-
-              SizedBox(
-                height: isLandScape ? size.height * 0 : size.height * 0.02,
-              ),
               TabBar(
                 unselectedLabelColor: Colors.grey,
                 controller: _tabController,

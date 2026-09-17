@@ -36,7 +36,7 @@ class CategoriesTabView extends StatelessWidget {
 
                       placeholder: (context, url) => const Center(
                         child: CircularProgressIndicator.adaptive(
-                          backgroundColor: Colors.grey,
+                 
                         ),
                       ),
 

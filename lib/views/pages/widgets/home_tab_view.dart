@@ -1,5 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:ecommerce_app/view_models/cubit/home_cubit.dart';
+import 'package:ecommerce_app/view_models/home_cubit/home_cubit.dart';
 import 'package:ecommerce_app/views/pages/widgets/product_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -45,36 +45,35 @@ class HomeTabView extends StatelessWidget {
                           ),
                         ),
                         placeholder: (context, url) => Center(
-                          child: CircularProgressIndicator.adaptive(
-                            backgroundColor: Colors.grey,
-                          ),
+                          child: CircularProgressIndicator.adaptive(),
                         ),
-                        errorWidget: (context, url, error) => Icon(Icons.error),
+                        errorWidget: (context, url, error) =>
+                            Icon(Icons.error),
                       ),
                   options: FlutterCarouselOptions(
                     height: isLandScape
                         ? size.height * 0.45
                         : size.height * 0.2,
                     viewportFraction: isLandScape ? 0.5 : 1,
-
+    
                     initialPage: 0,
-
+    
                     enableInfiniteScroll: true,
-
+    
                     autoPlay: true,
-
+    
                     autoPlayInterval: const Duration(seconds: 5),
-
+    
                     autoPlayAnimationDuration: const Duration(
                       milliseconds: 500,
                     ),
-
+    
                     autoPlayCurve: Curves.linear,
-
+    
                     pauseAutoPlayOnTouch: true,
-
+    
                     enlargeCenterPage: true,
-
+    
                     enlargeFactor: 0.3,
                     slideIndicator: CircularWaveSlideIndicator(),
                     indicatorMargin: 2,
@@ -93,10 +92,11 @@ class HomeTabView extends StatelessWidget {
                     ),
                     Text(
                       "See All",
-                      style: Theme.of(context).textTheme.titleMedium!.copyWith(
-                        fontWeight: FontWeight(600),
-                        color: Theme.of(context).primaryColor,
-                      ),
+                      style: Theme.of(context).textTheme.titleMedium!
+                          .copyWith(
+                            fontWeight: FontWeight(600),
+                            color: Theme.of(context).primaryColor,
+                          ),
                     ),
                   ],
                 ),
@@ -110,8 +110,9 @@ class HomeTabView extends StatelessWidget {
                     mainAxisSpacing: 15,
                     crossAxisSpacing: 15,
                   ),
-                  itemBuilder: (context, index) =>
-                      ProductItem(productItemModel: state.productItems[index]),
+                  itemBuilder: (context, index) => ProductItem(
+                    productItemModel: state.productItems[index],
+                  ),
                 ),
               ],
             ),

@@ -43,7 +43,7 @@ List<CategoryModel> dummyCategories = [
     name: 'Bags',
     productsCount: 160,
     bgColor: AppColors.black,
-    textColor: AppColors.black,
+    textColor: AppColors.white,
     imgUrl:
         'https://images.pexels.com/photos/6650001/pexels-photo-6650001.jpeg',
   ),
