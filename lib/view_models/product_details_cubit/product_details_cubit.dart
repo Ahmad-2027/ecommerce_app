@@ -2,7 +2,7 @@ import 'package:ecommerce_app/models/add_to_cart_model.dart';
 import 'package:ecommerce_app/models/product_item_model.dart';
 import 'package:ecommerce_app/services/auth_services.dart';
 import 'package:ecommerce_app/services/favorite_services.dart';
-import 'package:ecommerce_app/services/product_details_Services.dart';
+import 'package:ecommerce_app/services/product_details_services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'product_details_state.dart';
