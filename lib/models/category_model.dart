@@ -6,7 +6,6 @@ class CategoryModel {
   final String name;
   final String imgUrl;
   final int productsCount;
-  final Color bgColor;
   final Color textColor;
 
   CategoryModel({
@@ -14,9 +13,36 @@ class CategoryModel {
     required this.name,
     required this.productsCount,
     required this.imgUrl,
-    this.bgColor = AppColors.primary,
     this.textColor = AppColors.white,
   });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'imgUrl': imgUrl,
+      'productsCount': productsCount,
+      'textColor': textColor.toARGB32(),
+    };
+  }
+
+  factory CategoryModel.fromMap(Map<String, dynamic> map) {
+    final rawTextColor = map['textColor'];
+    final textColorValue = rawTextColor is String
+        ? int.parse(
+            '${rawTextColor.replaceFirst('#', '').length == 6 ? 'FF' : ''}${rawTextColor.replaceFirst('#', '')}',
+            radix: 16,
+          )
+        : rawTextColor as int;
+
+    return CategoryModel(
+      id: map['id'] as String,
+      name: map['name'] as String,
+      imgUrl: map['imgUrl'] as String,
+      productsCount: map['productsCount'] as int,
+      textColor: Color(textColorValue),
+    );
+  }
 }
 
 List<CategoryModel> dummyCategories = [
@@ -24,7 +50,6 @@ List<CategoryModel> dummyCategories = [
     id: '1',
     name: 'New Arrivals',
     productsCount: 208,
-    bgColor: AppColors.white,
     imgUrl:
         'https://images.pexels.com/photos/33705550/pexels-photo-33705550.jpeg',
     textColor: AppColors.white,
@@ -33,7 +58,6 @@ List<CategoryModel> dummyCategories = [
     id: '2',
     name: 'Clothes',
     productsCount: 358,
-    bgColor: AppColors.green,
     textColor: AppColors.white,
     imgUrl:
         'https://images.pexels.com/photos/6461325/pexels-photo-6461325.jpeg',
@@ -42,7 +66,6 @@ List<CategoryModel> dummyCategories = [
     id: '3',
     name: 'Bags',
     productsCount: 160,
-    bgColor: AppColors.black,
     textColor: AppColors.white,
     imgUrl:
         'https://images.pexels.com/photos/6650001/pexels-photo-6650001.jpeg',
@@ -51,7 +74,6 @@ List<CategoryModel> dummyCategories = [
     id: '4',
     name: 'Shoes',
     productsCount: 230,
-    bgColor: AppColors.white,
     textColor: AppColors.white,
     imgUrl:
         'https://images.pexels.com/photos/38487263/pexels-photo-38487263.jpeg',
@@ -60,7 +82,6 @@ List<CategoryModel> dummyCategories = [
     id: '5',
     name: 'Electronics',
     productsCount: 101,
-    bgColor: AppColors.blue,
     textColor: AppColors.white,
     imgUrl:
         'https://images.pexels.com/photos/18485666/pexels-photo-18485666.jpeg',

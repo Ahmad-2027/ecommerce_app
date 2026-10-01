@@ -1,19 +1,15 @@
-import 'package:ecommerce_app/utitlities/app_routes.dart';
-import 'package:ecommerce_app/view_models/checkout_cubit/checkout_cubit.dart';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class EmptyShippingPayment extends StatelessWidget {
   final String title;
-  const new({super.key, required this.title});
+  final VoidCallback? onTap;
+  const new({super.key, required this.title,required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    final checkoutCubit = BlocProvider.of<CheckoutCubit>(context);
     return InkWell(
-      onTap: () {
-        Navigator.of(context).pushNamed(AppRoutes.addNewCardMethod).then((value)=>checkoutCubit.getCartItems());
-      },
+      onTap:onTap,
       child: Container(
         width: double.infinity,
         height: 100,

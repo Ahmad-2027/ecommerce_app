@@ -9,7 +9,8 @@ final class HomeLoading extends HomeState {}
 final class HomeLoaded extends HomeState {
   final List<HomeCarouselItemModel> carouselItems;
   final List<ProductItemModel> productItems;
-  HomeLoaded({required this.carouselItems, required this.productItems});
+  final List<FavoriteProductModel> favItems;
+  HomeLoaded({required this.carouselItems, required this.productItems,required this.favItems});
 }
 
 final class HomeLoadingError extends HomeState {

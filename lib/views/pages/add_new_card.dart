@@ -1,4 +1,4 @@
-import 'package:ecommerce_app/view_models/add_new_payment_card_cubit/add_new_payment_card_cubit.dart';
+import 'package:ecommerce_app/view_models/payment_methods_cubit/payment_methods_cubit.dart';
 import 'package:ecommerce_app/views/pages/widgets/label_with_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,7 +19,7 @@ class _AddNewPaymentCardPageState extends State<AddNewPaymentCardPage> {
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
-    final cubit = BlocProvider.of<AddNewPaymentCardCubit>(context);
+    final cubit = BlocProvider.of<PaymentMethodsCubit>(context);
     return Scaffold(
       appBar: AppBar(title: Text("Add new card"), centerTitle: true),
 
@@ -62,69 +62,62 @@ class _AddNewPaymentCardPageState extends State<AddNewPaymentCardPage> {
                 SizedBox(
                   height: 50,
                   width: double.infinity,
-                  child:
-                      BlocConsumer<
-                        AddNewPaymentCardCubit,
-                        AddNewPaymentCardState
-                      >(
-                        bloc: cubit,
-                        listenWhen: (previous, current) =>
-                            current is AddNewPaymentCardFailure ||
-                            current is AddNewPaymentCardLoaded,
-                        listener: (context, state) {
-                          if (state is AddNewPaymentCardLoaded) {
-                            Navigator.pop(context);
-                          } else if (state is AddNewPaymentCardFailure) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(state.message)),
+                  child: BlocConsumer<PaymentMethodsCubit, PaymentMethodsState>(
+                    bloc: cubit,
+                    listenWhen: (previous, current) =>
+                        current is AddNewPaymentCardFailure ||
+                        current is AddNewPaymentCardLoaded,
+                    listener: (context, state) {
+                      if (state is AddNewPaymentCardLoaded) {
+                        Navigator.pop(context,true);
+                      } else if (state is AddNewPaymentCardFailure) {
+                        ScaffoldMessenger.of(
+                          context,
+                        ).showSnackBar(SnackBar(content: Text(state.message)));
+                      }
+                    },
+                    buildWhen: (previous, current) =>
+                        current is AddNewPaymentCardFailure ||
+                        current is AddNewPaymentCardLoaded ||
+                        current is AddNewPaymentCardLoading,
+
+                    builder: (context, state) {
+                      if (state is AddNewPaymentCardLoading) {
+                        return ElevatedButton(
+                          onPressed: null,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Theme.of(context).primaryColor,
+                            foregroundColor: Colors.white,
+                          ),
+                          child: const CircularProgressIndicator.adaptive(),
+                        );
+                      }
+                      return ElevatedButton(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            cubit.addNewCardPayment(
+                              cardNumber: _cardNumberController.text,
+                              expired: _expiryDateController.text,
+                              cvv: _cvvController.text,
+                              cardHolderName: _cardHolderNameController.text,
                             );
                           }
                         },
-                        buildWhen: (previous, current) =>
-                            current is AddNewPaymentCardFailure ||
-                            current is AddNewPaymentCardLoaded ||
-                            current is AddNewPaymentCardLoading,
-      
-                        builder: (context, state) {
-                          if (state is AddNewPaymentCardLoading) {
-                            return ElevatedButton(
-                              onPressed: null,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Theme.of(context)
-                                    .primaryColor,
-                                foregroundColor: Colors.white,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Theme.of(context).primaryColor,
+                          foregroundColor: Colors.white,
+                        ),
+                        child: Text(
+                          "Add card",
+                          style: Theme.of(context).textTheme.titleMedium!
+                              .copyWith(
+                                fontWeight: FontWeight(600),
+                                color: Colors.white,
                               ),
-                              child:
-                                  const CircularProgressIndicator.adaptive(),
-                            );
-                          }
-                          return ElevatedButton(
-                            onPressed: () {
-                              if (_formKey.currentState!.validate()) {
-                                cubit.addNewCardPayment(
-                                  cardNumber: _cardNumberController.text,
-                                  expired: _expiryDateController.text,
-                                  cvv: _cvvController.text,
-                                  cardHolderName:
-                                      _cardHolderNameController.text,
-                                );
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Theme.of(context).primaryColor,
-                              foregroundColor: Colors.white,
-                            ),
-                            child: Text(
-                              "Add card",
-                              style: Theme.of(context).textTheme.titleMedium!
-                                  .copyWith(
-                                    fontWeight: FontWeight(600),
-                                    color: Colors.white,
-                                  ),
-                            ),
-                          );
-                        },
-                      ),
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ],
             ),

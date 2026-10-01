@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:ecommerce_app/view_models/cart_cubit/cart_cubit.dart';
+import 'package:ecommerce_app/view_models/favorite_Product_cubit/fav_product_cubit.dart';
 import 'package:ecommerce_app/view_models/product_details_cubit/product_details_cubit.dart';
 import 'package:ecommerce_app/views/pages/widgets/counter.dart';
 import 'package:ecommerce_app/views/pages/widgets/product_sizes.dart';
@@ -8,13 +9,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProductDetailsPage extends StatelessWidget {
-  final String productId;
-  const new({super.key, required this.productId});
+  final String productid;
+  const new({super.key, required this.productid});
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final cubit = BlocProvider.of<ProductDetailsCubit>(context);
+    final productDetailsCubit = BlocProvider.of<ProductDetailsCubit>(context);
+    final favCubit = context.read<FavProductCubit>();
     return BlocProvider.value(
       value: BlocProvider.of<CartCubit>(context),
       child: BlocBuilder<ProductDetailsCubit, ProductDetailsState>(
@@ -22,7 +24,7 @@ class ProductDetailsPage extends StatelessWidget {
             current is ProductDetailsLoaded ||
             current is ProductDetailsLoading ||
             current is ProductDetailsLoadingError,
-        bloc: cubit,
+        bloc: productDetailsCubit,
         builder: (context, state) {
           if (state is ProductDetailsLoading) {
             return Scaffold(
@@ -31,6 +33,8 @@ class ProductDetailsPage extends StatelessWidget {
           } else if (state is ProductDetailsLoadingError) {
             return Scaffold(body: Center(child: Text("Loading Error")));
           } else if (state is ProductDetailsLoaded) {
+            final productModel = state.product;
+            final String? favId = state.favId;
             return Scaffold(
               extendBodyBehindAppBar: true,
               appBar: AppBar(
@@ -43,9 +47,66 @@ class ProductDetailsPage extends StatelessWidget {
                 ),
                 centerTitle: true,
                 actions: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: Icon(Icons.favorite_border),
+                  BlocBuilder<FavProductCubit, FavProductState>(
+                    bloc: favCubit,
+                    buildWhen: (previous, current) {
+                      return ((current is AddedProductToFavorites ||
+                                  current is RemovedProductFromFavorites ||
+                                  current is FavProductInitial ||
+                                  current is AddingProductToFavorites ||
+                                  current is RemovingProductToFavoritesError ||
+                                  current is AddingProductToFavoritesError ||
+                                  current is RemovingProductFromFavorites) &&
+                              productid == favCubit.selectedPRoductId) ||
+                          current is FavProductInitial;
+                    },
+                    builder: (context, state) {
+                      if (state is RemovingProductFromFavorites) {
+                        return IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.favorite_border),
+                        );
+                      } else if (state is AddingProductToFavorites) {
+                        return IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.favorite_rounded, color: Colors.red),
+                        );
+                      } else if (state is AddedProductToFavorites) {
+                        return IconButton(
+                          onPressed: () async {
+                            favCubit.selectedPRoductId = productid;
+                            await favCubit.removeFromFavorites(state.favId);
+                            await favCubit.fetchFavProductsDetails();
+                          },
+                          icon: Icon(Icons.favorite_rounded, color: Colors.red),
+                        );
+                      } else if (state is RemovedProductFromFavorites) {
+                        return IconButton(
+                          onPressed: () async {
+                            favCubit.selectedPRoductId = productid;
+                            await favCubit.addToFavorites(productModel.id);
+
+                            await favCubit.fetchFavProductsDetails();
+                          },
+                          icon: Icon(Icons.favorite_border),
+                        );
+                      }
+                      return IconButton(
+                        onPressed: () async {
+                          if (productModel.isFavorite) {
+                            favCubit.selectedPRoductId = productid;
+                            await favCubit.removeFromFavorites(favId!);
+                          } else {
+                            favCubit.selectedPRoductId = productid;
+                            await favCubit.addToFavorites(productModel.id);
+                          }
+                          await favCubit.fetchFavProductsDetails();
+                        },
+                        icon: productModel.isFavorite
+                            ? Icon(Icons.favorite_rounded, color: Colors.red)
+                            : Icon(Icons.favorite_border),
+                      );
+                    },
                   ),
                 ],
               ),
@@ -134,21 +195,21 @@ class ProductDetailsPage extends StatelessWidget {
                                     ProductDetailsCubit,
                                     ProductDetailsState
                                   >(
-                                    bloc: cubit,
+                                    bloc: productDetailsCubit,
                                     builder: (context, state) {
                                       if (state
                                           is QuantityCounterChangedInProductDetailsPage) {
                                         return CounterWidget(
-                                          productId: productId,
+                                          productId: productid,
                                           value: state.value,
-                                          cubit: cubit,
+                                          cubit: productDetailsCubit,
                                         );
                                       } else if (state
                                           is ProductDetailsLoaded) {
                                         return CounterWidget(
-                                          productId: productId,
+                                          productId: productid,
                                           value: 1,
-                                          cubit: cubit,
+                                          cubit: productDetailsCubit,
                                         );
                                       } else {
                                         return const SizedBox.shrink();
@@ -171,23 +232,22 @@ class ProductDetailsPage extends StatelessWidget {
                                 ProductDetailsCubit,
                                 ProductDetailsState
                               >(
-                                bloc: cubit,
+                                bloc: productDetailsCubit,
                                 buildWhen: (previous, current) =>
                                     current is ProductSizeSelected ||
                                     current is ProductDetailsLoaded,
+
                                 builder: (context, state) {
-                                  if (state is ProductDetailsLoaded) {
+                                  if (state is ProductSizeSelected) {
                                     return ProductSizesWidget(
-                                      id: productId,
-                                      productSize: state.product.size,
-                                    );
-                                  } else if (state is ProductSizeSelected) {
-                                    return ProductSizesWidget(
-                                      id: productId,
+                                      id: productid,
                                       productSize: state.size,
                                     );
                                   } else {
-                                    return const SizedBox.shrink();
+                                    return ProductSizesWidget(
+                                      id: productid,
+                                      productSize: null,
+                                    );
                                   }
                                 },
                               ),
@@ -240,34 +300,65 @@ class ProductDetailsPage extends StatelessWidget {
                                   ),
                                   Expanded(
                                     child:
-                                        BlocBuilder<
+                                        BlocConsumer<
                                           ProductDetailsCubit,
                                           ProductDetailsState
                                         >(
-                                          bloc: cubit,
+                                          listenWhen: (previous, current) =>
+                                              current
+                                                  is ProductAddingToCartError ||
+                                              current is ProductAddedToCart,
+                                          listener: (context, state) {
+                                            if (state
+                                                is ProductAddingToCartError) {
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                SnackBar(
+                                                  duration: Duration(
+                                                    microseconds: 500,
+                                                  ),
+                                                  content: Text(state.message),
+                                                ),
+                                              );
+                                            } else if (state
+                                                is ProductAddedToCart) {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) {
+                                                  return AlertDialog(
+                                                    title: Text(
+                                                      'The process succeded',
+                                                    ),
+                                                    content: Text(
+                                                      "Product added to cart",
+                                                    ),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          Navigator.of(context)
+                                                              .pop();
+                                                        },
+                                                        child: Text('Ok'),
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            }
+                                          },
+                                          bloc: productDetailsCubit,
                                           buildWhen: (previous, current) =>
                                               current is ProductAddedToCart ||
-                                              current is ProductAddingToCart,
+                                              current is ProductAddingToCart ||
+                                              current
+                                                  is ProductAddingToCartError,
                                           builder: (context, state) {
                                             if (state is ProductAddingToCart) {
                                               return ElevatedButton(
                                                 onPressed: () {},
                                                 child:
                                                     CupertinoActivityIndicator(),
-                                              );
-                                            } else if (state
-                                                is ProductAddedToCart) {
-                                              return ElevatedButton(
-                                                style: ElevatedButton.styleFrom(
-                                                  backgroundColor: Theme.of(
-                                                    context,
-                                                  ).primaryColor,
-                                                  foregroundColor: Colors.white,
-                                                ),
-                                                onPressed: null,
-                                                child: const Text(
-                                                  "Added to cart",
-                                                ),
                                               );
                                             }
                                             return ElevatedButton.icon(
@@ -277,14 +368,17 @@ class ProductDetailsPage extends StatelessWidget {
                                                 ).primaryColor,
                                                 foregroundColor: Colors.white,
                                               ),
-                                              onPressed: () {
-                                                if (cubit.size != null) {
-                                                  BlocProvider.of<
+                                              onPressed: () async {
+                                                if (productDetailsCubit.size !=
+                                                    null) {
+                                                  final cartCubit = context
+                                                      .read<CartCubit>();
+                                                  await BlocProvider.of<
                                                         ProductDetailsCubit
                                                       >(context)
-                                                      .addToCart(productId);
-                                                  context
-                                                      .read<CartCubit>()
+                                                      .addToCart(productid);
+
+                                                  await cartCubit
                                                       .getCartItems();
                                                 } else {
                                                   ScaffoldMessenger.of(

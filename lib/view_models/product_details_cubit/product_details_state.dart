@@ -8,7 +8,8 @@ final class ProductDetailsLoading extends ProductDetailsState {}
 
 final class ProductDetailsLoaded extends ProductDetailsState {
   final ProductItemModel product;
-  ProductDetailsLoaded({required this.product});
+  final String? favId;
+  ProductDetailsLoaded({required this.product,required this.favId});
 }
 
 final class ProductDetailsLoadingError extends ProductDetailsState {
@@ -32,4 +33,9 @@ final class ProductAddingToCart extends ProductDetailsState {}
 final class ProductAddedToCart extends ProductDetailsState {
   final String productId;
   ProductAddedToCart({required this.productId});
+}
+
+final class ProductAddingToCartError extends ProductDetailsState {
+  final String message;
+  ProductAddingToCartError({required this.message});
 }

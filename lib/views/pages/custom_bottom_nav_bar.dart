@@ -15,7 +15,14 @@ class BottomNavBar extends StatefulWidget {
 }
 
 class _BottomNavBarState extends State<BottomNavBar> {
+  late final ScrollController _controller;
   int currentTab = 0;
+  @override
+  void initState() {
+    super.initState();
+    _controller = ScrollController();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +40,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              "Ahmad Alwazeh",
+              "Ahmad alwazeh",
               style: Theme.of(context).textTheme.titleMedium,
             ),
             const SizedBox(height: 5),
@@ -60,6 +67,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
         },
         tabs: [
           PersistentTabConfig(
+            scrollController: _controller,
             screen: const HomePage(),
             item: ItemConfig(
               icon: Icon(Icons.home_outlined),
@@ -82,7 +90,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
             item: ItemConfig(
               icon: Icon(Icons.favorite_border_outlined),
               title: "Favorites",
-      
+
               activeForegroundColor: Theme.of(context).primaryColor,
               inactiveBackgroundColor: AppColors.grey,
             ),
@@ -92,7 +100,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
             item: ItemConfig(
               icon: Icon(Icons.account_circle_outlined),
               title: "Profile",
-      
+
               activeForegroundColor: Theme.of(context).primaryColor,
               inactiveBackgroundColor: AppColors.grey,
             ),

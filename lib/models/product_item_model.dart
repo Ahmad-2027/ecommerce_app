@@ -1,6 +1,25 @@
 import 'package:ecommerce_app/utitlities/app_assets.dart';
-enum ProductSize{
-  S,M,L,xL
+
+enum ProductSize {
+  S,
+  M,
+  L,
+  xL;
+
+  static ProductSize fromString(String size) {
+    switch (size.toUpperCase()) {
+      case "S":
+        return ProductSize.S;
+      case "M":
+        return ProductSize.M;
+      case "L":
+        return ProductSize.L;
+      case "XL":
+        return ProductSize.xL;
+      default:
+        return ProductSize.S;
+    }
+  }
 }
 
 class ProductItemModel {
@@ -13,7 +32,6 @@ class ProductItemModel {
   bool isFavorite;
   double averageRate;
   final int quantity;
-  ProductSize? size;
   ProductItemModel({
     required this.id,
     required this.name,
@@ -24,7 +42,6 @@ class ProductItemModel {
     required this.category,
     this.averageRate = 4.5,
     this.quantity = 1,
-    this.size
   });
 
   ProductItemModel copyWith({
@@ -46,10 +63,34 @@ class ProductItemModel {
       category: category ?? this.category,
       isFavorite: isFavorite ?? this.isFavorite,
       averageRate: averageRate ?? this.averageRate,
-   
     );
   }
-  
+
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'imgUrl': imgUrl,
+      'price': price,
+      'description': description,
+      'category': category,
+      'averageRate': averageRate,
+      'quantity': quantity,
+    };
+  }
+
+  factory ProductItemModel.fromMap(Map<String, dynamic> map) {
+    return ProductItemModel(
+      id: map['id'] as String,
+      name: map['name'] as String,
+      imgUrl: map['imgUrl'] as String,
+      price: (map['price'] as num).toDouble(),
+      description: map['description'] as String? ?? 'Lorem Ipsum is simply dummy text of the printing and typesetting industry Lorem Ipsum is simply dummy text of the printing and typesetting industry Lorem Ipsum is simply dummy text of the printing and typesetting industry Lorem Ipsum is simply dummy text of the printing and typesetting industry.',
+      category: map['category'] as String,
+      averageRate: (map['averageRate'] as num?)?.toDouble() ?? 4.5,
+      quantity: map['quantity'] as int? ?? 1,
+    );
+  }
 }
 
 List<ProductItemModel> dummyProducts = [
