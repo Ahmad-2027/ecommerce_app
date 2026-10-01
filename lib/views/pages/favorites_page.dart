@@ -4,9 +4,21 @@ import 'package:ecommerce_app/view_models/favorite_Product_cubit/fav_product_cub
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-class FavoritesPage extends StatelessWidget {
+class FavoritesPage extends StatefulWidget {
   const new({super.key});
 
+  @override
+  State<FavoritesPage> createState() => _FavoritesPageState();
+}
+
+class _FavoritesPageState extends State<FavoritesPage> {
+
+  @override
+  void initState() {
+    super.initState();
+    final cubit = BlocProvider.of<FavProductCubit>(context);
+    cubit.fetchFavProductsDetails();
+  }
   @override
   Widget build(BuildContext context) {
     final cubit = BlocProvider.of<FavProductCubit>(context);

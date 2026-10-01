@@ -79,7 +79,6 @@ class MyApp extends StatelessWidget {
             BlocProvider(
               create: (context) {
                 final cubit = FavProductCubit();
-                cubit.fetchFavProductsDetails();
                 return cubit;
               },
             ),
