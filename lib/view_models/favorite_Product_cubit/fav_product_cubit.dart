@@ -95,4 +95,9 @@ Future<List<FavoriteProductWithDetails>>
     return [];
   }
 }
+void clearFavorites() {
+  emit(
+      FetchedFavoriteProducts([]),
+    );
+}
 }

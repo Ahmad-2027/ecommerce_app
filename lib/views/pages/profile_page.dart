@@ -1,5 +1,6 @@
 import 'package:ecommerce_app/utitlities/app_routes.dart';
 import 'package:ecommerce_app/view_models/auth_cubit/auth_cubit.dart';
+import 'package:ecommerce_app/view_models/favorite_Product_cubit/fav_product_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -17,6 +18,7 @@ class ProfilePage extends StatelessWidget {
           buildWhen: (previous, current) => current is AuthLoggingOut,
           listener: (context, state) {
             if (state is AuthLoggedout) {
+               context.read<FavProductCubit>().clearFavorites();
               Navigator.of(
                 context,
                 rootNavigator: true,
